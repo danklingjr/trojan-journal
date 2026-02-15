@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wrestling Journal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Wrestling Match Journal</h1>
+        <p>Track period-by-period events and compare match performance.</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle" type="button" class="ghost-btn theme-toggle" aria-label="Toggle dark mode"></button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar panel">
+        <div class="section-header">
+          <h2>Wrestlers</h2>
+          <button id="open-wrestler-modal" type="button" class="event-entry-add">Add</button>
+        </div>
+        <div class="table-wrap sidebar-list-wrap">
+          <ul id="wrestler-list" class="wrestler-list"></ul>
+        </div>
+      </aside>
+
+      <div id="content-split" class="content-split">
+        <section id="left-content-panel" class="panel">
+          <div id="global-analytics-section">
+            <div class="section-header">
+              <h2>Selected Wrestler</h2>
+              <button id="delete-wrestler" type="button" class="ghost-btn ghost-danger" disabled>Delete</button>
+            </div>
+            <div id="global-analytics" class="summary-card"></div>
+          </div>
+
+          <div id="match-list-section">
+            <div class="section-header">
+              <h2>Match List</h2>
+              <button id="open-match-modal" type="button" class="event-entry-add">Add Match</button>
+            </div>
+            <div class="table-wrap">
+              <table id="match-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Opponent</th>
+                    <th>Result</th>
+                    <th>TD %</th>
+                    <th>TD U/T</th>
+                    <th>NF U/T</th>
+                    <th>P/C/S</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <div id="content-resizer" class="content-resizer" role="separator" aria-label="Resize panels" aria-orientation="vertical"></div>
+
+        <section id="right-content-panel" class="panel">
+          <div class="section-header">
+            <h2>Selected Match</h2>
+            <div class="section-actions">
+              <button id="export-csv" type="button" class="ghost-btn" disabled>Export CSV</button>
+              <button id="delete-match" type="button" class="ghost-btn ghost-danger" disabled>Delete</button>
+            </div>
+          </div>
+          <div id="selected-match-summary" class="summary-card">Select a match to begin logging period events.</div>
+
+          <div id="event-log-section" class="is-hidden">
+            <h2>Event Log</h2>
+            <div id="event-period-tables" class="period-tables"></div>
+            <button id="add-overtime" type="button" class="add-overtime-btn">Add Overtime Period</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div id="event-edit-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="edit-event-title">
+      <div class="modal-card">
+        <h3 id="edit-event-title">Edit Event</h3>
+        <form id="event-edit-form" class="grid-form">
+          <label>
+            Period
+            <select name="period" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="OT">OT</option>
+              <option value="OT2">OT 2</option>
+              <option value="OT3">OT 3</option>
+              <option value="OT4">OT 4</option>
+            </select>
+          </label>
+          <label>
+            Type
+            <select name="type" required>
+              <option value="shot_attempt">Shot Attempt</option>
+              <option value="takedown">Takedown</option>
+              <option value="nearfall">Nearfall</option>
+              <option value="caution">Caution</option>
+              <option value="stalling">Stalling</option>
+              <option value="penalty">Penalty</option>
+              <option value="escape">Escape</option>
+              <option value="reversal">Reversal</option>
+            </select>
+          </label>
+          <label>
+            Us/Them
+            <select name="side" required>
+              <option value="us">Us</option>
+              <option value="them">Them</option>
+            </select>
+          </label>
+          <label>
+            Points
+            <input type="number" min="0" max="5" step="1" name="points" />
+          </label>
+          <label class="full">
+            Note
+            <input type="text" name="note" />
+          </label>
+          <div class="modal-actions full">
+            <button type="button" id="event-edit-delete" class="ghost-btn ghost-danger">Delete</button>
+            <button type="button" id="event-edit-cancel" class="ghost-btn">Cancel</button>
+            <button type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="match-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="match-modal-title">
+      <div class="modal-card match-modal-card">
+        <h3 id="match-modal-title">Add Match</h3>
+        <form id="match-form" class="grid-form">
+          <label>
+            Date
+            <input type="date" name="date" required />
+          </label>
+          <label>
+            Opponent
+            <input type="text" name="opponent" required />
+          </label>
+          <label>
+            Weight Class
+            <input type="text" name="weightClass" placeholder="e.g. 132" />
+          </label>
+          <label>
+            Tournament / Meet
+            <input type="text" name="eventName" placeholder="Event name" />
+          </label>
+          <label>
+            Result
+            <select name="result">
+              <option value="">Unknown</option>
+              <option value="W">Win</option>
+              <option value="L">Loss</option>
+            </select>
+          </label>
+          <div class="modal-actions full">
+            <button type="button" id="match-modal-cancel" class="ghost-btn">Cancel</button>
+            <button type="submit">Save Match</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="wrestler-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="wrestler-modal-title">
+      <div class="modal-card wrestler-modal-card">
+        <h3 id="wrestler-modal-title">Add Wrestler</h3>
+        <form id="wrestler-form" class="grid-form">
+          <label class="full">
+            Wrestler Name
+            <input type="text" name="name" placeholder="Add wrestler name" required />
+          </label>
+          <div class="modal-actions full">
+            <button type="button" id="wrestler-modal-cancel" class="ghost-btn">Cancel</button>
+            <button type="submit">Save Wrestler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="wrestler-edit-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="wrestler-edit-modal-title">
+      <div class="modal-card wrestler-modal-card">
+        <h3 id="wrestler-edit-modal-title">Edit Wrestler</h3>
+        <form id="wrestler-edit-form" class="grid-form">
+          <label class="full">
+            Wrestler Name
+            <input id="wrestler-edit-name" type="text" name="name" required />
+          </label>
+          <div class="modal-actions full">
+            <button type="button" id="wrestler-edit-modal-cancel" class="ghost-btn">Cancel</button>
+            <button type="submit">Save Wrestler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="summary-modal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="summary-modal-title">
+      <div class="modal-card summary-modal-card">
+        <h3 id="summary-modal-title">Edit Match Summary</h3>
+        <form id="summary-form" class="grid-form">
+          <label class="full">
+            Match Summary (Markdown)
+            <textarea
+              id="summary-textarea"
+              name="summary"
+              class="summary-edit-textarea"
+              placeholder="Use paragraphs, **bold**, *italic*, '- item', or '1. item'."
+            ></textarea>
+          </label>
+          <div class="modal-actions full">
+            <button type="button" id="summary-modal-cancel" class="ghost-btn">Cancel</button>
+            <button type="submit">Save Summary</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
